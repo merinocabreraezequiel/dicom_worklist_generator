@@ -1,0 +1,45 @@
+CR,Computed Radiography
+CT,Computed Tomography
+MR,Magnetic Resonance Imaging
+NM,Nuclear Medicine
+US,Ultrasound
+OT,Other
+BI,Biomagnetic Imaging
+CD,Color Flow Doppler
+DD,Duplex Doppler
+ES,Endoscopy
+LS,Laser Surface Scan
+PT,Positron Emission Tomography
+RG,Radiographic Imaging
+ST,SPECT (Single Photon Emission Computed Tomography)
+XA,X-Ray Angiography
+RF,Radio Fluoroscopy
+MG,Mammography
+IO,Intra-oral Radiography
+PX,Panoramic X-Ray
+GM,General Microscopy
+XC,External-camera Photography
+PR,Presentation State
+BDUS,Bone Densitometry (Ultrasound)
+BMD,Bone Densitometry
+DOC,Document
+KO,Key Object Selection
+RTIMAGE,Radiotherapy Image
+RTSTRUCT,Radiotherapy Structure Set
+RTPLAN,Radiotherapy Plan
+RTRECORD,Radiotherapy Record
+SEG,Segmentation
+SM,Slide Microscopy
+SR,Structured Report
+IVUS,Intravascular Ultrasound
+OP,Ophthalmic Photography
+OPR,Ophthalmic Refraction
+OPV,Ophthalmic Visual Field
+SMR,Stereometric Relationship
+LEN,Lensometry
+ECG,Electrocardiography
+EPS,Cardiac Electrophysiology
+HD,Hemodynamic Waveform
+SRF,Subjective Refraction
+OCT,Optical Coherence Tomography
+KER,Keratometry
