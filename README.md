@@ -5,8 +5,10 @@ Randomize patients generator and output to WL files or mysql database
 
 * python 3.13 [Download](https://www.python.org/downloads/)
 * dependencies
-** pandas [PIP REPO](https://pypi.org/project/pandas/)
 
+> pandas [PIP REPO](https://pypi.org/project/pandas/)
+
+> pydicom [PIP REPO](https://pypi.org/project/pydicom/)
 
 ### Instalation 🔧
 
