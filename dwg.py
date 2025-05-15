@@ -17,10 +17,12 @@ class patient: #PATTIENT CLASS
     date_of_birth ="" #PATIENT DATE OF BIRTH
     gender = "" #PATIENT GENDER
     id = "" #PATIENT ID
-
+    
     male_names = [] #MALE NAMES
     female_names = [] #FEMALE NAMES
     surnames = [] #SURNAME NAMES
+    modalities = [] #MODALITY
+    doctors = [] #DOCTORS
 
     min_age = 0 #MIN AGE TO GENERATE DATE OF BIRTH
     max_age = 100 #MAX AGE TO GENERATE DATE OF BIRTH
@@ -32,6 +34,8 @@ class patient: #PATTIENT CLASS
         if _min_age == '': self.min_age = 0 #SET MIN AGE
         if _max_age == '': self.max_age = 100 #SET MAX AGE
         self.db_names() #LOAD CSV FILES
+        self.db_modalities() #LOAD MODALITY
+        self.db_doctors() #LOAD DOCTORS
 
     def randomize_list(self, _list): #RANDOMIZE FUNCTION
         random.shuffle(_list)
@@ -44,7 +48,16 @@ class patient: #PATTIENT CLASS
         self.male_names = self.randomize_list(csv_male_names["male"].tolist())
         self.female_names = self.randomize_list(csv_female_names["female"].tolist())
         self.surnames = self.randomize_list(csv_surnames["surname"].tolist())
-    
+
+    def db_modalities(self): #LOAD CSV FILES
+        csv_modalities = pd.read_csv("csv_data/modalities.csv", header=None, names=["modaility","description"])
+        csv_modalities = csv_modalities.sample(frac=1).reset_index(drop=True)
+        self.modalities = list(csv_modalities.itertuples(index=False, name=None))
+
+    def db_doctors(self): #LOAD CSV FILES
+        csv_doctors = pd.read_csv("csv_data/doctors.csv", header=None, names=["doctor"])
+        self.doctors = self.randomize_list(csv_doctors["doctor"].tolist())
+
     #DATA GENERATION
     def gen_dob(self): #GENERATE DATE OF BIRTH
         dob = datetime.today() - timedelta(days=(random.randint(self.min_age, self.max_age) * 365 + random.randint(0, 364))) #GET CURRANT DATE AND SUBTRACT AGE IN DAYS CALCULATED BY RANDOM AGE BY YEARS AND ADD SOME DAYS
