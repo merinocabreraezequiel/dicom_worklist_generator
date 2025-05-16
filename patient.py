@@ -59,7 +59,7 @@ class patient: #PATTIENT CLASS
     #DATA GENERATION
     def gen_dob(self): #GENERATE DATE OF BIRTH
         dob = datetime.today() - timedelta(days=(random.randint(self.min_age, self.max_age) * 365 + random.randint(0, 364))) #GET CURRANT DATE AND SUBTRACT AGE IN DAYS CALCULATED BY RANDOM AGE BY YEARS AND ADD SOME DAYS
-        return dob.date().isoformat() #FORMAT YYYY-MM-DD
+        return dob.date().strftime("%Y%m%d") #FORMAT YYYYMMDD
 
     def gen_full_name(self): #GENERATE FULL NAME FROM GENDER
         if self.gender == "": self.gender = self.gen_gender()
@@ -110,7 +110,7 @@ class patient: #PATTIENT CLASS
         
     def set_dob(self, _dob): #SET DATE OF BIRTH
         try:
-            datetime.strptime(_dob, "%Y-%m-%d")
+            datetime.strptime(_dob, "%Y%m%d")
             self.date_of_birth = _dob
         except ValueError:
             raise ValueError("Incorrect date format, should be YYYY-MM-DD")
@@ -168,7 +168,7 @@ class patient: #PATTIENT CLASS
     def get_age(self): #GET AGE
         if self.date_of_birth == "":
             self.date_of_birth = self.gen_dob()
-        dob = datetime.strptime(self.date_of_birth, "%Y-%m-%d")
+        dob = datetime.strptime(self.date_of_birth, "%Y%m%d")
         age = datetime.today().year - dob.year - ((datetime.today().month, datetime.today().day) < (dob.month, dob.day))
         return age
     
