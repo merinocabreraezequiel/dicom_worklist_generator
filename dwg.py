@@ -71,8 +71,6 @@ if __name__ == '__main__':
         print("time: ", time)
         print("procedure: ", procedure)
         print("aetitle: ", aetitle,"\n")
-        pat.regen_patient()
-        sch.regen_schedule()
         worklistit(
             _filepath=".",  # FOLDER TO SAVE WL FILES
             _patient_name=fn,
@@ -88,3 +86,5 @@ if __name__ == '__main__':
             _procedure_id=str(procedure)[::-1],
 
         )
+        pat.regen_patient()
+        sch.regen_schedule()
