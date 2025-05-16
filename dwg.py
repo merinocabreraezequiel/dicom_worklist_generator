@@ -13,7 +13,7 @@ from idsgenerator import idsgenerator
 from procgenerator import procgenerator
 
 
-def worklistit(_filepath, _patient_name, _patient_id, _birth_date, _gender, _accession_number, _study_date, _modality, _modality_desc, _doctor):
+def worklistit(_filepath, _patient_name, _patient_id, _birth_date, _gender, _accession_number, _study_date, _study_time, _modality, _aetitle, _modality_desc, _doctor, _procedure_sid, _procedure_id):
     ds = Dataset() #DATASET
     ds.PatientName = _patient_name
     ds.PatientID = _patient_id
@@ -22,12 +22,12 @@ def worklistit(_filepath, _patient_name, _patient_id, _birth_date, _gender, _acc
     ds.AccessionNumber = _accession_number
     ds.Modality = _modality
     ds.ScheduledProcedureStepStartDate = _study_date
-    ds.ScheduledProcedureStepStartTime = "120000"
+    ds.ScheduledProcedureStepStartTime = _study_time
     ds.ScheduledPerformingPhysicianName = _doctor
     ds.ScheduledProcedureStepDescription = _modality_desc
-    ds.ScheduledStationAETitle = "ORTHANC"
-    ds.ScheduledProcedureStepID = "12345"
-    ds.RequestedProcedureID = "54321"
+    ds.ScheduledStationAETitle = _aetitle
+    ds.ScheduledProcedureStepID = _procedure_sid
+    ds.RequestedProcedureID = _procedure_id
 
     meta = Dataset() #DATASET OF INTEGRATION IN WL
     meta.MediaStorageSOPClassUID = pydicom.uid.UID("1.2.840.10008.5.1.4.31")  #MODALITY WORKLIST INFO MODEL - FIND
@@ -73,12 +73,18 @@ if __name__ == '__main__':
         print("aetitle: ", aetitle,"\n")
         pat.regen_patient()
         sch.regen_schedule()
-        #crear_worklist(
-        #    filepath=".",  # o un directorio como "./worklist"
-        #    patient_name="Juan Perez",
-        #    patient_id="P001",
-        #    birth_date="19850101",
-        #    sex="M",
-        #    accession_number="ACC001",
-        #    study_date="20250514"
-        #)
+        worklistit(
+            _filepath=".",  # FOLDER TO SAVE WL FILES
+            _patient_name=fn,
+            _patient_id=id,
+            _birth_date=dob,
+            _gender=g,
+            __accession_number="ACC001",
+            _study_date=date,
+            __modality=md,
+            _modality_desc=md_dec,
+            _doctor=doc,
+            _procedure_sid=procedure,
+            _procedure_id=str(procedure)[::-1],
+
+        )
