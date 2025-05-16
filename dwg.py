@@ -74,19 +74,19 @@ if __name__ == '__main__':
         print("procedure: ", procedure)
         print("aetitle: ", aetitle,"\n")
         worklistit(
-            _filepath=".",  # FOLDER TO SAVE WL FILES
+            _filepath="worklist_files/",  # FOLDER TO SAVE WL FILES
             _patient_name=fn,
             _patient_id=id,
-            _birth_date=dob,
+            _birth_date=str(dob),
             _gender=g,
             _accession_number="ACC001",
-            _study_date=date,
-            _study_time=time,
+            _study_date=str(date),
+            _study_time=str(time),
             _aetitle=aetitle,
             _modality=md,
             _modality_desc=md_dec,
             _doctor=doc,
-            _procedure_sid=procedure,
+            _procedure_sid=str(procedure),
             _procedure_id=str(procedure)[::-1],
 
         )
