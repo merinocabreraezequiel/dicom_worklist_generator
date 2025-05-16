@@ -174,4 +174,5 @@ cython_debug/
 .pypirc
 
 # MY OWN IGNORE FILES
-.wl
+worklist_files/
+*.wl

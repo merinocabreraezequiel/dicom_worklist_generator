@@ -46,6 +46,8 @@ def worklistit(_filepath, _patient_name, _patient_id, _birth_date, _gender, _acc
     file_meta.is_implicit_VR = True
     file_meta.save_as(filename)
 
+    return filename
+
 if __name__ == '__main__':
     print("go")
     num_items= 10
@@ -77,9 +79,11 @@ if __name__ == '__main__':
             _patient_id=id,
             _birth_date=dob,
             _gender=g,
-            __accession_number="ACC001",
+            _accession_number="ACC001",
             _study_date=date,
-            __modality=md,
+            _study_time=time,
+            _aetitle=aetitle,
+            _modality=md,
             _modality_desc=md_dec,
             _doctor=doc,
             _procedure_sid=procedure,
