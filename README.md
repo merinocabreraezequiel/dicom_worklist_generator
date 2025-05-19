@@ -11,6 +11,8 @@ It works correctly with ORTHANC
 
 > pydicom [PIP REPO](https://pypi.org/project/pydicom/)
 
+> mysql-connector-python [PIP REPO](https://pypi.org/project/mysql-connector-python/)
+
 ### Instalation 🔧
 
 > Clone the repository
@@ -21,6 +23,10 @@ It works correctly with ORTHANC
 ```
 python dwg.py
 ```
+
+>> Select if Databases or files as output
+
+>> Select mode, one patient, multiple or manual input
 
 ## build with 🛠️
 
