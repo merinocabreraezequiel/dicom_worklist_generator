@@ -6,6 +6,8 @@ import sys
 #IMPORT EXTERNAL DEPENDENCIES
 import pydicom
 from pydicom.dataset import Dataset, FileDataset
+import mysql.connector
+from mysql.connector import Error
 
 #OWN DEPENDENCIES
 from patient import patient
@@ -53,7 +55,7 @@ def worklistit(_filepath, _patient_name, _patient_id, _birth_date, _gender, _acc
 
     return filename
 
-def create_multiple_worklists(_how_many=10):
+def create_multiple_worklists(_how_many=10, _conn=None): #MULTIPLE WORKLIST CREATION
     num_items= _how_many
     sch = scheduling()
     pid = idsgenerator()
@@ -67,6 +69,110 @@ def create_multiple_worklists(_how_many=10):
         sch.set_procedure(proc_list[i])
         date, time, procedure, aetitle = sch.get_schedule()
         if debug: print_worklist(fn, g, dob, md, md_dec, doc, id, date, time, procedure, aetitle)
+        if _conn != None:
+            try:
+                cursor = conn.cursor()
+                query = """
+                    INSERT INTO worklist (
+                        ScheduledProcedureStepID,
+                        PatientID,
+                        PatientName,
+                        AccessionNumber,
+                        StudyInstanceUID,
+                        RequestedProcedureID,
+                        RequestedProcedureDescription,
+                        ScheduledProcedureStepStartDate,
+                        ScheduledProcedureStepStartTime,
+                        ScheduledPerformingPhysicianName,
+                        ScheduledStationAETitle,
+                        ScheduledProcedureStepDescription
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                values = (
+                    procedure,
+                    id,
+                    fn,
+                    'AACC001',
+                    md,
+                    procedure,
+                    str(procedure)[::-1],
+                    date,
+                    time,
+                    '',
+                    'ORTHANC',
+                    md_dec
+                )
+                cursor.execute(query, values)
+                conn.commit()
+            except Error as e:
+                print(f"Data insert error: {e}")
+        else:
+            worklistit(
+                _filepath="worklist_files/",  # FOLDER TO SAVE WL FILES
+                _patient_name=fn,
+                _patient_id=id,
+                _birth_date=str(dob),
+                _gender=g,
+                _accession_number="ACC001",
+                _study_date=str(date),
+                _study_time=str(time),
+                _aetitle=aetitle,
+                _modality=md,
+                _modality_desc=md_dec,
+                _doctor=doc,
+                _procedure_sid=str(procedure),
+                _procedure_id=str(procedure)[::-1],
+
+            )
+            pat.regen_patient()
+            sch.regen_schedule()
+    print(f"{num_items} worklists created in {os.path.abspath('worklist_files')}")
+    print("--------------------------------------------------\n") 
+
+def create_worklist(_conn=None): #WORKLIST CREATION
+    pat = patient()
+    fn, g, dob, id, md, md_dec, doc = pat.get_patient()
+    sch = scheduling()
+    date, time, procedure, aetitle = sch.get_schedule()
+    if debug: print_worklist(fn, g, dob, md, md_dec, doc, id, date, time, procedure, aetitle)
+    if _conn != None:
+        try:
+            cursor = conn.cursor()
+            query = """
+                INSERT INTO worklist (
+                    ScheduledProcedureStepID,
+                    PatientID,
+                    PatientName,
+                    AccessionNumber,
+                    StudyInstanceUID,
+                    RequestedProcedureID,
+                    RequestedProcedureDescription,
+                    ScheduledProcedureStepStartDate,
+                    ScheduledProcedureStepStartTime,
+                    ScheduledPerformingPhysicianName,
+                    ScheduledStationAETitle,
+                    ScheduledProcedureStepDescription
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            values = (
+                procedure,
+                id,
+                fn,
+                'AACC001',
+                md,
+                procedure,
+                str(procedure)[::-1],
+                date,
+                time,
+                '',
+                'ORTHANC',
+                md_dec
+            )
+            cursor.execute(query, values)
+            conn.commit()
+        except Error as e:
+            print(f"Data insert error: {e}")
+    else:
         worklistit(
             _filepath="worklist_files/",  # FOLDER TO SAVE WL FILES
             _patient_name=fn,
@@ -82,39 +188,11 @@ def create_multiple_worklists(_how_many=10):
             _doctor=doc,
             _procedure_sid=str(procedure),
             _procedure_id=str(procedure)[::-1],
-
         )
-        pat.regen_patient()
-        sch.regen_schedule()
-    print(f"{num_items} worklists created in {os.path.abspath('worklist_files')}")
-    print("--------------------------------------------------\n") 
-
-def create_worklist():
-    pat = patient()
-    fn, g, dob, id, md, md_dec, doc = pat.get_patient()
-    sch = scheduling()
-    date, time, procedure, aetitle = sch.get_schedule()
-    if debug: print_worklist(fn, g, dob, md, md_dec, doc, id, date, time, procedure, aetitle)
-    worklistit(
-        _filepath="worklist_files/",  # FOLDER TO SAVE WL FILES
-        _patient_name=fn,
-        _patient_id=id,
-        _birth_date=str(dob),
-        _gender=g,
-        _accession_number="ACC001",
-        _study_date=str(date),
-        _study_time=str(time),
-        _aetitle=aetitle,
-        _modality=md,
-        _modality_desc=md_dec,
-        _doctor=doc,
-        _procedure_sid=str(procedure),
-        _procedure_id=str(procedure)[::-1],
-    )
     print(f"Worklist created in {os.path.abspath('worklist_files')}")
     print("--------------------------------------------------\n")
 
-def create_worklist_manual():
+def create_worklist_manual(_conn = None): #MANUAL WORKLIST CREATION
     print("Enter the following data:")
     fn = input("Full name: ")
     g = input("Gender:")
@@ -141,22 +219,60 @@ def create_worklist_manual():
     sch.set_sch_time(time)
     date, time, procedure, aetitle = sch.get_schedule()
     if debug: print_worklist(fn, g, dob, md, md_dec, doc, id, date, time, procedure, aetitle)
-    worklistit(
-        _filepath="worklist_files/",  # FOLDER TO SAVE WL FILES
-        _patient_name=fn,
-        _patient_id=id,
-        _birth_date=str(dob),
-        _gender=g,
-        _accession_number="ACC001",
-        _study_date=str(date),
-        _study_time=str(time),
-        _aetitle=aetitle,
-        _modality=md,
-        _modality_desc=md_dec,
-        _doctor=doc,
-        _procedure_sid=str(procedure),
-        _procedure_id=str(procedure)[::-1],
-    )
+    if _conn != None:
+        try:
+            cursor = conn.cursor()
+            query = """
+                INSERT INTO worklist (
+                    ScheduledProcedureStepID,
+                    PatientID,
+                    PatientName,
+                    AccessionNumber,
+                    StudyInstanceUID,
+                    RequestedProcedureID,
+                    RequestedProcedureDescription,
+                    ScheduledProcedureStepStartDate,
+                    ScheduledProcedureStepStartTime,
+                    ScheduledPerformingPhysicianName,
+                    ScheduledStationAETitle,
+                    ScheduledProcedureStepDescription
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            values = (
+                procedure,
+                id,
+                fn,
+                'AACC001',
+                md,
+                procedure,
+                str(procedure)[::-1],
+                date,
+                time,
+                '',
+                'ORTHANC',
+                md_dec
+            )
+            cursor.execute(query, values)
+            conn.commit()
+        except Error as e:
+            print(f"Data insert error: {e}")
+    else:
+        worklistit(
+            _filepath="worklist_files/",  # FOLDER TO SAVE WL FILES
+            _patient_name=fn,
+            _patient_id=id,
+            _birth_date=str(dob),
+            _gender=g,
+            _accession_number="ACC001",
+            _study_date=str(date),
+            _study_time=str(time),
+            _aetitle=aetitle,
+            _modality=md,
+            _modality_desc=md_dec,
+            _doctor=doc,
+            _procedure_sid=str(procedure),
+            _procedure_id=str(procedure)[::-1],
+        )
     print(f"Worklist created in {os.path.abspath('worklist_files')}")
     print("--------------------------------------------------\n")
 
@@ -175,20 +291,69 @@ def print_worklist(_fn, _g, _dob, _id, _md, _md_dec, _doc, _date, _time, _proced
     print("--------------------------------------------------")
 
 
+def conectar_bd(_server, _db_name, _user, _pass): #CONNECTION TO MYSQL
+    try:
+        conn = mysql.connector.connect(
+            host=_server, 
+            port=3306, 
+            user=_user,
+            password=_pass,
+            database=_db_name
+        )
+        if conn.is_connected():
+            print("Connected to MySQL Server")
+            return conn
+    except Error as e:
+        print(f"MySQL connection error: {e}")
+        return None
+
+
 if __name__ == '__main__':
+    conn = None
     while True:
+        print("Welcome to the Worklist Data Generator")
+        print("--------------------------------------\n")
+        mode = input("""Select the mode of operation:
+Press F for create files
+Press D for database
+Press E for exit\n""").upper()
+        while mode not in ["F", "D", "E"]:
+            print("Invalid option")
+            mode = input("""Select the mode of operation:
+Press F for create files
+Press D for database
+Press E for exit\n""").upper()
+        if mode == "F":
+            print("Files mode")
+            if not os.path.exists("worklist_files"):
+                os.makedirs("worklist_files")
+            print("Worklist files will be created in worklist_files folder")
+        elif mode == "D":
+            print("Database mode")
+            db_server = input("Enter the database server: ")
+            db_name = input("Enter the database name: ")
+            db_user = input("Enter the database user: ")
+            db_pass = input("Enter the database password: ")
+            conn = conectar_bd(db_server, db_name, db_user, db_pass)
+        elif mode == "E":
+            print("Good Bye")
+            sys.exit()
+        else:
+            print("Invalid option")
+        print("--------------------------------------------------\n")
+
         print("""Press 1 to create one worklis
 Press 2 to create multiple worklists
 Press 3 for manual worklist creation
 Press 4 to exit\n""")
         option = input("Option: ")
         if option == "1":
-            create_worklist()
+            create_worklist(conn)
         elif option == "2":
             num_items = int(input("How many worklists do you want to create? "))
-            create_multiple_worklists(num_items)
+            create_multiple_worklists(num_items, conn)
         elif option == "3":
-            create_worklist_manual()
+            create_worklist_manual(conn)
         elif option == "4":
             print("Good Bye")
             sys.exit()
