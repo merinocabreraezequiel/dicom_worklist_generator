@@ -21,20 +21,23 @@ debug = False
 
 
 def worklistit(_filepath, _patient_name, _patient_id, _birth_date, _gender, _accession_number, _study_date, _study_time, _modality, _aetitle, _modality_desc, _doctor, _procedure_sid, _procedure_id):
+    print(_filepath, _patient_name, _patient_id, _birth_date, _gender, _accession_number, _study_date, _study_time, _modality, _aetitle, _modality_desc, _doctor, _procedure_sid, _procedure_id)
     ds = Dataset() #DATASET
+    sps = Dataset() #SCHEDULED PROCEDURE STEP SEQUENCE
     ds.PatientName = _patient_name
     ds.PatientID = _patient_id
     ds.PatientBirthDate = _birth_date
     ds.PatientSex = _gender
     ds.AccessionNumber = _accession_number
-    ds.Modality = _modality
-    ds.ScheduledProcedureStepStartDate = _study_date
-    ds.ScheduledProcedureStepStartTime = _study_time
-    ds.ScheduledPerformingPhysicianName = _doctor
-    ds.ScheduledProcedureStepDescription = _modality_desc
-    ds.ScheduledStationAETitle = _aetitle
-    ds.ScheduledProcedureStepID = _procedure_sid
+    sps.Modality = _modality
+    sps.ScheduledProcedureStepStartDate = _study_date
+    sps.ScheduledProcedureStepStartTime = _study_time
+    sps.ScheduledPerformingPhysicianName = _doctor
+    sps.ScheduledProcedureStepDescription = _modality_desc
+    sps.ScheduledStationAETitle = _aetitle
+    sps.ScheduledProcedureStepID = _procedure_sid
     ds.RequestedProcedureID = _procedure_id
+    ds.ScheduledProcedureStepSequence = [sps] #ASSIGN SCHEDULED PROCEDURE STEP SEQUENCE
 
     meta = Dataset() #DATASET OF INTEGRATION IN WL
     meta.MediaStorageSOPClassUID = pydicom.uid.UID("1.2.840.10008.5.1.4.31")  #MODALITY WORKLIST INFO MODEL - FIND
