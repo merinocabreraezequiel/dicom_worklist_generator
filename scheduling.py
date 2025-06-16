@@ -6,6 +6,7 @@ class scheduling:
     sch_date = ''
     procedure = ''
     aetitle = 'ORTHANC'
+    or_name = "OPERATION ROOM"
 
     margin_days = 30
     min_duration = 30 
@@ -29,11 +30,16 @@ class scheduling:
         max = (10**self.procedure_len) - 1
         return random.randint(min, max)
     
+    def gen_or_name(self):
+        or_names = ["OR1", "OR2", "OR3", "OR4", "OR5"]
+        return random.choice(or_names)
+    
     def regen_schedule(self):
         self.sch_date = self.gen_sch_date()
         self.sch_time = self.gen_sch_time()
         self.procedure = self.gen_procedure()
         self.aetitle = "ORTHANC"
+        self.or_name = self.gen_or_name()
     
     #SETTERS
     def set_sch_date(self, _sch_date):
@@ -74,6 +80,12 @@ class scheduling:
         else:
             self.aetitle = _aetitle
     
+    def set_or_name(self, _or_name):
+        if _or_name == "":
+            raise ValueError("Operation Room name cannot be empty")
+        else:
+            self.or_name = _or_name
+    
     #GETTERS
     def get_sch_date(self):
         if self.sch_date == "":
@@ -94,4 +106,9 @@ class scheduling:
         return self.aetitle
     
     def get_schedule(self):
-        return self.sch_date, self.sch_time, self.procedure, self.aetitle
+        return self.sch_date, self.sch_time, self.procedure, self.aetitle, self.or_name
+    
+    def get_or_name(self):
+        if self.or_name == "":
+            self.or_name = self.gen_or_name()
+        return self.or_name

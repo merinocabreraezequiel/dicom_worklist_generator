@@ -17,11 +17,11 @@ from procgenerator import procgenerator
 
 #GLOBAL VARIABLES
 #DEBUGGING
-debug = False
+isDebug = False
 
 
-def worklistit(_filepath, _patient_name, _patient_id, _birth_date, _gender, _accession_number, _study_date, _study_time, _modality, _aetitle, _modality_desc, _doctor, _procedure_sid, _procedure_id):
-    print(_filepath, _patient_name, _patient_id, _birth_date, _gender, _accession_number, _study_date, _study_time, _modality, _aetitle, _modality_desc, _doctor, _procedure_sid, _procedure_id)
+def worklistit(_filepath, _patient_name, _patient_id, _birth_date, _gender, _accession_number, _study_date, _study_time, _modality, _aetitle, _modality_desc, _doctor, _procedure_sid, _procedure_id, _or_name):
+    if isDebug: print(_filepath, _patient_name, _patient_id, _birth_date, _gender, _accession_number, _study_date, _study_time, _modality, _aetitle, _modality_desc, _doctor, _procedure_sid, _procedure_id, _or_name)
     ds = Dataset() #DATASET
     sps = Dataset() #SCHEDULED PROCEDURE STEP SEQUENCE
     ds.PatientName = _patient_name
@@ -32,6 +32,7 @@ def worklistit(_filepath, _patient_name, _patient_id, _birth_date, _gender, _acc
     sps.Modality = _modality
     sps.ScheduledProcedureStepStartDate = _study_date
     sps.ScheduledProcedureStepStartTime = _study_time
+    sps.ScheduledStationName = _or_name
     sps.ScheduledPerformingPhysicianName = _doctor
     sps.ScheduledProcedureStepDescription = _modality_desc
     sps.ScheduledStationAETitle = _aetitle
@@ -70,8 +71,8 @@ def create_multiple_worklists(_how_many=10, _conn=None): #MULTIPLE WORKLIST CREA
         pat.set_id(id_list[i])
         fn, g, dob, id, md, md_dec, doc = pat.get_patient()
         sch.set_procedure(proc_list[i])
-        date, time, procedure, aetitle = sch.get_schedule()
-        if debug: print_worklist(fn, g, dob, md, md_dec, doc, id, date, time, procedure, aetitle)
+        date, time, procedure, aetitle, or_name = sch.get_schedule()
+        if isDebug: print_worklist(fn, g, dob, md, md_dec, doc, id, date, time, procedure, aetitle, or_name)
         if _conn != None:
             try:
                 cursor = conn.cursor()
@@ -125,7 +126,7 @@ def create_multiple_worklists(_how_many=10, _conn=None): #MULTIPLE WORKLIST CREA
                 _doctor=doc,
                 _procedure_sid=str(procedure),
                 _procedure_id=str(procedure)[::-1],
-
+                _or_name=or_name,
             )
             pat.regen_patient()
             sch.regen_schedule()
@@ -279,7 +280,7 @@ def create_worklist_manual(_conn = None): #MANUAL WORKLIST CREATION
     print(f"Worklist created in {os.path.abspath('worklist_files')}")
     print("--------------------------------------------------\n")
 
-def print_worklist(_fn, _g, _dob, _id, _md, _md_dec, _doc, _date, _time, _procedure, _aetitle): #PRINT DATA BEFORE CREATING WL
+def print_worklist(_fn, _g, _dob, _id, _md, _md_dec, _doc, _date, _time, _procedure, _aetitle, _or_name): #PRINT DATA BEFORE CREATING WL
     print("full name: ", _fn)
     print("gender: ", _g)
     print("date of birth: ", _dob)
@@ -291,6 +292,7 @@ def print_worklist(_fn, _g, _dob, _id, _md, _md_dec, _doc, _date, _time, _proced
     print("time: ", _time)
     print("procedure: ", _procedure)
     print("aetitle: ", _aetitle,"\n")
+    print("OR Name: ", _or_name,"\n")
     print("--------------------------------------------------")
 
 
